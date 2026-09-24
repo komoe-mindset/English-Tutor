@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1c2d4b">
+  <meta name="description" content="Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.">
+  <title>Mingalar · AI English Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" type="button" data-view="home" aria-label="Mingalar home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-name"><strong>Mingalar</strong><small>AI English Tutor</small></span>
+      </button>
+      <div class="brand-divider"></div>
+      <div class="tagline"><span>Speak English <b>•</b> Build Your Future</span><small lang="my">အင်္ဂလိပ်စကား ပြောတတ်ဖို့ · အနာဂတ်ကို တည်ဆောက်ဖို့</small></div>
+      <div class="header-actions">
+        <div class="language-switch" role="group" aria-label="Display language">
+          <button type="button" data-language="en"><strong>EN</strong><small>English</small></button>
+          <button type="button" data-language="mm"><strong>MM</strong><small lang="my">မြန်မာ</small></button>
+          <button type="button" data-language="both"><strong>Both</strong><small lang="my">နှစ်ဘာသာ</small></button>
+        </div>
+        <button class="profile-button" type="button" data-view="progress" aria-label="View my progress">M</button>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <aside class="sidebar" aria-label="Main navigation">
+        <nav id="primaryNav"></nav>
+        <div class="sidebar-note">
+          <span class="note-spark">✦</span>
+          <strong>Small steps. Strong voice.</strong>
+          <span lang="my">နေ့တိုင်း နည်းနည်းစီ လေ့ကျင့်ပါ။</span>
+        </div>
+      </aside>
+
+      <main id="mainView" tabindex="-1"></main>
+
+      <aside id="rightPanel" class="right-panel" aria-label="Lesson details"></aside>
+    </div>
+
+    <footer class="statusbar" id="statusbar"></footer>
+  </div>
+
+  <div id="lessonDialog" class="dialog-backdrop" hidden>
+    <div class="lesson-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <div class="dialog-header">
+        <div><span class="eyebrow">YOUR LESSON LIBRARY</span><h2 id="dialogTitle">Find a situation to practice</h2></div>
+        <button type="button" class="icon-button close-button" data-action="close-dialog" aria-label="Close lesson library">×</button>
+      </div>
+      <div class="dialog-tools">
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="lessonSearch" type="search" placeholder="Search situations or Myanmar words…" autocomplete="off"></label>
+        <select id="categoryFilter" aria-label="Filter by topic"></select>
+      </div>
+      <div id="lessonList" class="lesson-list"></div>
+      <div class="dialog-footnote">47 situations from the supplied guide + 3 clearly marked bonus situations.</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="lessons.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

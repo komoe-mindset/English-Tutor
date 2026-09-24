@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2e4b">
+  <meta name="description" content="Interactive 10-step spoken English course for Myanmar learners, adapted from Saya Nay's ebook.">
+  <title>10 Essential Steps · Mingalar English</title>
+  <link rel="stylesheet" href="mastery.css">
+</head>
+<body>
+  <div class="course-shell">
+    <header class="course-topbar">
+      <a class="course-brand" href="mastery.html" aria-label="Mingalar 10 Steps home">
+        <span class="flower" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>Mingalar</strong><small>AI English Tutor</small></span>
+      </a>
+      <div class="top-title"><strong>10 Essential Steps</strong><small lang="my">အင်္ဂလိပ်စကားပြော တိုးတက်ရန် အဆင့် ၁၀ ဆင့်</small></div>
+      <div class="top-links">
+        <a href="index.html" class="practice-link">🎧 150 Sentence Practice</a>
+        <button type="button" id="topProgress" class="progress-chip" data-course-action="overview">0 / 10 steps</button>
+      </div>
+    </header>
+
+    <div class="course-grid">
+      <aside class="course-sidebar" aria-label="Course navigation">
+        <button type="button" class="overview-link" data-course-action="overview">✦ &nbsp; Course overview <span lang="my">သင်ခန်းစာများ</span></button>
+        <div class="rail-heading">YOUR LEARNING PATH</div>
+        <nav id="stepRail" aria-label="Ten essential steps"></nav>
+        <div class="rail-footer"><span>Small lesson.<br>Real practice.</span><strong lang="my">နေ့စဉ် နည်းနည်းစီ လေ့ကျင့်ပါ။</strong></div>
+      </aside>
+
+      <main id="courseMain" class="course-main" tabindex="-1"></main>
+
+      <aside id="coachPanel" class="coach-panel" aria-label="Progress and learning notes"></aside>
+    </div>
+    <footer class="course-footer"><span>Adapted into interactive activities from <strong>Saya Nay, How to Master Spoken English</strong>.</span><span>Speak a little today. Speak more tomorrow.</span></footer>
+  </div>
+  <div id="courseToast" role="status" aria-live="polite" class="course-toast"></div>
+  <script src="mastery.js" defer></script>
+</body>
+</html>
