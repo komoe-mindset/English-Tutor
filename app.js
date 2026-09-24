@@ -66,7 +66,9 @@
     recognition: null,
     toastTimer: null,
     search: '',
-    category: 'all'
+    category: 'all',
+    geminiApiKey: localStorage.getItem('mingalar_gemini_api_key') || '',
+    geminiModel: localStorage.getItem('mingalar_gemini_model') || 'gemini-2.5-flash'
   };
 
   function readStore() {
@@ -234,7 +236,7 @@
       '</div><div class="keep-going"><span>⭐</span><div><strong>Keep Going!</strong><small lang="my">ဆက်လက်ကြိုးစားပါ။</small></div></div>';
   }
   function hero() {
-    return '<div class="hero"><div class="hero-bubble"><strong>Mingalar Par!</strong><p>I’m your English tutor.<br>Let’s speak English together!</p><small lang="my">မင်္ဂလာပါ။ အင်္ဂလိပ်စကား အတူတူ လေ့ကျင့်ကြမယ်။</small></div><div class="hero-badge">✦ 50 situations · 150 sentences</div></div>';
+    return '<div class="hero"><img class="hero-img" src="assets/tutor.png" alt="Mingalar AI English Tutor" width="1586" height="992" fetchpriority="high" decoding="async"><div class="hero-bubble"><strong>Mingalar Par!</strong><p>I’m your English tutor.<br>Let’s speak English together!</p><small lang="my">မင်္ဂလာပါ။ အင်္ဂလိပ်စကား အတူတူ လေ့ကျင့်ကြမယ်။</small></div><div class="hero-badge">✦ 50 situations · 150 sentences</div></div>';
   }
   function sentenceBox(concealed) {
     const item = variant();
@@ -311,10 +313,10 @@
       '<p class="step-description">Respond naturally before looking at the model answer.<span lang="my">နမူနာအဖြေကို မကြည့်မီ မိမိဘာသာ အရင်ဖြေကြည့်ပါ။</span></p>' +
       `<div class="scenario"><strong>Real-life prompt</strong>${esc(scenarioText())}</div>` +
       '<label class="form-label">Your answer</label>' + textarea('answer', 'Type or say your own English answer…') +
-      `<div class="helper-row">${micButton('answer')}<button class="primary-button" type="button" data-action="feedback">${state.aiAvailable ? 'Get AI feedback' : 'Check my answer'}</button></div>` +
-      (state.aiAvailable ? '<p class="source-note">AI feedback sends this answer through your local server to OpenAI.</p>' : '') +
-      (state.aiBusy ? '<div class="feedback-box blue">Your AI coach is thinking…</div>' : '') +
-      (state.answerFeedback ? `<div class="feedback-box blue"><strong>${state.aiAvailable ? 'Tutor feedback' : 'Practice feedback'}</strong>${esc(state.answerFeedback).replace(/\n/g, '<br>')}</div>` : '')
+      `<div class="helper-row">${micButton('answer')}<button class="primary-button" type="button" data-action="feedback">${state.aiAvailable ? 'Get Gemini AI feedback' : 'Check my answer'}</button></div>` +
+      (state.aiAvailable ? '<p class="source-note">AI feedback evaluates your answer with Google Gemini AI.</p>' : '<p class="source-note">Local practice feedback active. <button type="button" class="mini-action" data-action="open-api-key">Configure Google Gemini API</button> for AI coaching.</p>') +
+      (state.aiBusy ? '<div class="feedback-box blue">Your Gemini AI coach is thinking…</div>' : '') +
+      (state.answerFeedback ? `<div class="feedback-box blue"><strong>${state.aiAvailable ? 'Gemini AI feedback' : 'Practice feedback'}</strong>${esc(state.answerFeedback).replace(/\n/g, '<br>')}</div>` : '')
     );
     if (state.step === 4) {
       const prompt = thinkPrompt();
@@ -363,7 +365,7 @@
   }
   function renderHome() {
     const next = LESSONS.find(function (item) { return !state.completed.includes(item.id); }) || LESSONS[0];
-    return `<div class="page-padding"><div class="page-heading"><div><span class="eyebrow">WELCOME TO MINGALAR</span><h1>Speak with confidence</h1><p lang="my">နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို ယုံကြည်မှုရှိရှိ ပြောကြည့်ပါ။</p></div></div><div class="dashboard-hero"><div class="dashboard-hero-inner"><span class="eyebrow">YOUR DAILY PRACTICE</span><h2>One sentence.<br>Seven ways to grow.</h2><p>Hear → Shadow → Answer → Think → Retry → Improve → Use</p><button class="primary-button" type="button" data-action="resume">Start practicing ${icon('arrow', 16)}</button></div></div>` +
+    return `<div class="page-padding"><div class="page-heading"><div><span class="eyebrow">WELCOME TO MINGALAR</span><h1>Speak with confidence</h1><p lang="my">နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို ယုံကြည်မှုရှိရှိ ပြောကြည့်ပါ။</p></div></div><div class="dashboard-hero"><img class="dashboard-hero-bg" src="assets/tutor.png" alt="Mingalar AI English Tutor" width="1586" height="992" fetchpriority="high" decoding="async"><div class="dashboard-hero-inner"><span class="eyebrow">YOUR DAILY PRACTICE</span><h2>One sentence.<br>Seven ways to grow.</h2><p>Hear → Shadow → Answer → Think → Retry → Improve → Use</p><button class="primary-button" type="button" data-action="resume">Start practicing ${icon('arrow', 16)}</button></div></div>` +
       `<div class="summary-grid"><div class="summary-card"><span>🎯</span><strong>${state.completed.length}/50</strong><small>situations completed</small></div><div class="summary-card"><span>🔥</span><strong>${streak()}</strong><small>day streak</small></div><div class="summary-card"><span>⭐</span><strong>${state.completed.length * 20}</strong><small>experience points</small></div></div>` +
       '<div class="view-card"><span class="eyebrow">NEW INTERACTIVE COURSE</span><h2>10 Essential Steps to Master Spoken English</h2><p class="step-description">Turn Saya Nay’s ebook ideas into short speaking tasks, listening checks, phrase practice, and a 30-day plan.</p><a class="primary-button" href="mastery.html">Explore the 10 steps →</a></div>' +
       `<div class="section-heading"><h2>Continue learning</h2><button class="mini-action" type="button" data-action="choose-lesson">View all 50 →</button></div><div class="lesson-tiles">${[next, LESSONS[(next.id) % 50], LESSONS[(next.id + 1) % 50], LESSONS[(next.id + 2) % 50]].map(function (item) { return '<button class="lesson-tile" type="button" data-lesson="' + item.id + '"><span class="tile-number">' + String(item.id).padStart(2, '0') + '</span><span><strong>' + esc(item.title) + '</strong><small lang="my">' + esc(item.titleMm) + '</small></span></button>'; }).join('')}</div></div>`;
@@ -391,7 +393,7 @@
   function renderSettings() {
     return '<div class="page-padding">' + pageHead('PERSONALIZE', 'Settings', 'လေ့ကျင့်မှု ဆက်တင်များ') +
       `<div class="view-card"><h2>Learning preferences</h2><div class="setting-row"><div><strong>Display language</strong><small>English, Myanmar, or both for lesson guidance</small></div><select id="settingLanguage"><option value="both" ${state.language === 'both' ? 'selected' : ''}>Both</option><option value="en" ${state.language === 'en' ? 'selected' : ''}>English</option><option value="mm" ${state.language === 'mm' ? 'selected' : ''}>Myanmar</option></select></div><div class="setting-row"><div><strong>Voice speed</strong><small>Slow playback can help with shadowing</small></div><select id="settingRate"><option value="0.7" ${state.speechRate === .7 ? 'selected' : ''}>Slow</option><option value="0.9" ${state.speechRate === .9 ? 'selected' : ''}>Normal</option><option value="1.1" ${state.speechRate === 1.1 ? 'selected' : ''}>Fast</option></select></div></div>` +
-      `<div class="view-card"><h2>AI feedback</h2><p class="step-description">${state.aiAvailable ? 'Connected. Your written or transcribed answer can receive short AI coaching from the local server.' : 'Local practice feedback is active. To enable AI coaching, run the included server with an OPENAI_API_KEY environment variable.'}</p><p class="source-note">Your API key stays on the server. Speech recognition depends on browser support; typing is always available.</p></div>` +
+      `<div class="view-card"><h2>Google Gemini AI feedback</h2><p class="step-description">${state.aiAvailable ? 'Connected to Google Gemini AI. Your spoken and written responses receive intelligent feedback.' : 'Local rule-based feedback is currently active. Connect your Google Gemini API key to receive AI coaching.'}</p><button class="outline-button" type="button" data-action="open-api-key" style="margin-top:6px">⚙️ Configure Gemini API Key</button><p class="source-note" style="margin-top:10px">Seamlessly supports Cloudflare Pages deployment or static browser storage.</p></div>` +
       '<div class="view-card"><h2>Your data</h2><p class="step-description">Lesson progress is saved in this browser.</p><button class="danger-button" type="button" data-action="reset-progress">Reset progress</button></div></div>';
   }
   function render() {
@@ -436,22 +438,220 @@
     if (overlap >= 2) return 'You used relevant words for this situation. Compare your tone with the model: ' + example;
     return 'You made your own answer. Check whether it fits the situation, then compare with this model: ' + example;
   }
+  async function directGeminiFeedback(apiKey, model, target, situation, learnerAnswer, language) {
+    const targetModel = model || 'gemini-2.5-flash';
+    const prompt = `You are a supportive, practical English speaking coach for Myanmar learners.
+The learner was practicing the situation: "${situation}".
+The target natural model expression was: "${target}".
+The learner said or wrote: "${learnerAnswer}".
+
+Evaluate their answer in 2-3 concise sentences:
+1. Praise their effort and confirm whether their meaning was clear.
+2. Note any grammar or vocabulary adjustment gently if needed.
+3. Suggest one natural alternate way to say it in English.
+Keep tone encouraging, concise, and easy to read. ${language === 'mm' ? 'Provide a brief 1-line encouraging note in Myanmar language at the end.' : ''}`;
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 250, temperature: 0.7 }
+      })
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(function () { return {}; });
+      throw new Error(errData?.error?.message || ('Gemini API responded with ' + res.status));
+    }
+    const data = await res.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+  }
+
+  function updateAiStatusDot() {
+    const dot = document.getElementById('aiStatusDot');
+    if (dot) {
+      if (state.aiAvailable || Boolean(state.geminiApiKey)) {
+        dot.classList.add('active');
+        dot.title = 'Gemini AI Connected';
+      } else {
+        dot.classList.remove('active');
+        dot.title = 'Gemini AI Not Connected';
+      }
+    }
+  }
+
+  function openApiKeyDialog() {
+    const dialog = document.getElementById('apiKeyDialog');
+    if (!dialog) return;
+    const input = document.getElementById('geminiApiKeyInput');
+    const select = document.getElementById('geminiModelSelect');
+    const banner = document.getElementById('apiKeyBanner');
+    if (input) input.value = state.geminiApiKey || '';
+    if (select) select.value = state.geminiModel || 'gemini-2.5-flash';
+    if (banner) {
+      if (state.geminiApiKey) {
+        banner.className = 'api-key-status-banner success';
+        banner.innerHTML = '<span>Personal Gemini API key is configured in this browser.</span>';
+      } else if (state.aiAvailable) {
+        banner.className = 'api-key-status-banner success';
+        banner.innerHTML = '<span>Gemini AI is connected via Cloudflare Pages / server environment.</span>';
+      } else {
+        banner.className = 'api-key-status-banner info';
+        banner.innerHTML = '<span>No Gemini API key detected yet. Enter your API key below to enable real-time coaching.</span>';
+      }
+    }
+    dialog.hidden = false;
+    if (input) input.focus();
+  }
+
+  function closeApiKeyDialog() {
+    const dialog = document.getElementById('apiKeyDialog');
+    if (dialog) dialog.hidden = true;
+  }
+
+  async function testApiKey() {
+    const input = document.getElementById('geminiApiKeyInput');
+    const select = document.getElementById('geminiModelSelect');
+    const banner = document.getElementById('apiKeyBanner');
+    const key = (input ? input.value : state.geminiApiKey).trim();
+    const model = select ? select.value : state.geminiModel;
+
+    if (!key && !state.aiAvailable) {
+      if (banner) {
+        banner.className = 'api-key-status-banner error';
+        banner.innerHTML = '<span>Please enter a Gemini API key first.</span>';
+      }
+      return;
+    }
+
+    if (banner) {
+      banner.className = 'api-key-status-banner info';
+      banner.innerHTML = '<span>Testing connection to Google Gemini API…</span>';
+    }
+
+    try {
+      if (key) {
+        await directGeminiFeedback(key, model, 'Good morning', 'Greeting a colleague', 'Hello, good morning!', 'en');
+      } else {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lessonId: 1, target: 'Good morning', situation: 'Greeting', learnerAnswer: 'Hello!', language: 'en' })
+        });
+        if (!res.ok) throw new Error('Backend returned status ' + res.status);
+      }
+      if (banner) {
+        banner.className = 'api-key-status-banner success';
+        banner.innerHTML = '<span>Success! Google Gemini API is working properly.</span>';
+      }
+      toast('Gemini API test passed!');
+    } catch (err) {
+      if (banner) {
+        banner.className = 'api-key-status-banner error';
+        banner.innerHTML = `<span>Connection failed: ${esc(err.message)}</span>`;
+      }
+    }
+  }
+
+  function saveApiKey() {
+    const input = document.getElementById('geminiApiKeyInput');
+    const select = document.getElementById('geminiModelSelect');
+    const key = input ? input.value.trim() : '';
+    const model = select ? select.value : 'gemini-2.5-flash';
+
+    state.geminiApiKey = key;
+    state.geminiModel = model;
+    if (key) {
+      localStorage.setItem('mingalar_gemini_api_key', key);
+      state.aiAvailable = true;
+    } else {
+      localStorage.removeItem('mingalar_gemini_api_key');
+    }
+    localStorage.setItem('mingalar_gemini_model', model);
+
+    updateAiStatusDot();
+    toast(key ? 'Gemini API key saved!' : 'Saved preferences.');
+    closeApiKeyDialog();
+    render();
+  }
+
+  function clearApiKey() {
+    state.geminiApiKey = '';
+    localStorage.removeItem('mingalar_gemini_api_key');
+    const input = document.getElementById('geminiApiKeyInput');
+    if (input) input.value = '';
+    const banner = document.getElementById('apiKeyBanner');
+    if (banner) {
+      banner.className = 'api-key-status-banner info';
+      banner.innerHTML = '<span>Key cleared. Enter a new key if you wish.</span>';
+    }
+    checkStatus();
+    toast('API key cleared.');
+  }
+
+  function checkStatus() {
+    fetch('/api/status').then(function (response) { return response.ok ? response.json() : {}; })
+      .then(function (data) {
+        state.aiAvailable = Boolean(data.aiAvailable) || Boolean(state.geminiApiKey);
+        updateAiStatusDot();
+        if (state.view === 'settings' || state.view === 'speaking') render();
+      })
+      .catch(function () {
+        state.aiAvailable = Boolean(state.geminiApiKey);
+        updateAiStatusDot();
+      });
+  }
+
   async function getFeedback() {
     if (!state.inputs.answer.trim()) { toast('Say or type an answer first.'); return; }
     state.answerFeedback = localFeedback();
-    if (!state.aiAvailable) { render(); return; }
+    const hasAi = state.aiAvailable || Boolean(state.geminiApiKey);
+    if (!hasAi) { render(); return; }
     state.aiBusy = true; render();
     try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lessonId: state.lessonId, target: variant().en, situation: lesson().title,
-          learnerAnswer: state.inputs.answer.trim(), language: state.language })
-      });
-      if (!response.ok) throw new Error('Feedback service unavailable');
-      const data = await response.json();
-      if (data.feedback) state.answerFeedback = data.feedback;
-    } catch (_) { toast('AI feedback is unavailable. Showing local practice guidance.'); }
-    finally { state.aiBusy = false; render(); }
+      let feedbackResult = null;
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (state.geminiApiKey) headers['x-gemini-api-key'] = state.geminiApiKey;
+        const response = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            lessonId: state.lessonId,
+            target: variant().en,
+            situation: lesson().title,
+            learnerAnswer: state.inputs.answer.trim(),
+            language: state.language
+          })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.feedback) feedbackResult = data.feedback;
+        }
+      } catch (_) {}
+
+      if (!feedbackResult && state.geminiApiKey) {
+        feedbackResult = await directGeminiFeedback(
+          state.geminiApiKey,
+          state.geminiModel,
+          variant().en,
+          lesson().title,
+          state.inputs.answer.trim(),
+          state.language
+        );
+      }
+
+      if (feedbackResult) {
+        state.answerFeedback = feedbackResult;
+      } else {
+        toast('Gemini AI feedback unavailable. Showing local practice guidance.');
+      }
+    } catch (_) {
+      toast('Gemini AI feedback is unavailable. Showing local practice guidance.');
+    } finally {
+      state.aiBusy = false;
+      render();
+    }
   }
   function completeLesson() {
     if (!state.inputs.use.trim()) { toast('Add your own sentence to complete this lesson.'); return; }
@@ -481,11 +681,14 @@
     const button = event.target.closest('[data-action]');
     if (!button) {
       if (event.target.id === 'lessonDialog') closeDialog();
+      if (event.target.id === 'apiKeyDialog') closeApiKeyDialog();
       return;
     }
     const action = button.dataset.action;
     if (action === 'choose-lesson') openDialog();
     else if (action === 'close-dialog') closeDialog();
+    else if (action === 'open-api-key') openApiKeyDialog();
+    else if (action === 'close-api-dialog') closeApiKeyDialog();
     else if (action === 'resume') goView('speaking');
     else if (action === 'play') speak(variant().en);
     else if (action === 'play-text') speak(button.dataset.text);
@@ -511,6 +714,23 @@
       }
     }
   });
+
+  document.addEventListener('click', function (event) {
+    if (event.target.id === 'toggleApiKeyVis') {
+      const input = document.getElementById('geminiApiKeyInput');
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+        event.target.textContent = input.type === 'password' ? '👁' : '🔒';
+      }
+    } else if (event.target.id === 'testApiKeyBtn') {
+      testApiKey();
+    } else if (event.target.id === 'saveApiKeyBtn') {
+      saveApiKey();
+    } else if (event.target.id === 'clearApiKeyBtn') {
+      clearApiKey();
+    }
+  });
+
   document.addEventListener('input', function (event) {
     if (event.target.matches('textarea[name]')) state.inputs[event.target.name] = event.target.value;
     if (event.target.id === 'lessonSearch') { state.search = event.target.value; renderLibrary(); }
@@ -521,10 +741,12 @@
     if (event.target.id === 'settingRate') { state.speechRate = Number(event.target.value); persist(); toast('Voice speed updated.'); }
   });
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && !document.getElementById('lessonDialog').hidden) closeDialog();
+    if (event.key === 'Escape') {
+      if (!document.getElementById('lessonDialog').hidden) closeDialog();
+      if (!document.getElementById('apiKeyDialog').hidden) closeApiKeyDialog();
+    }
   });
-  fetch('/api/status').then(function (response) { return response.ok ? response.json() : {}; })
-    .then(function (data) { state.aiAvailable = Boolean(data.aiAvailable); if (state.view === 'settings') render(); })
-    .catch(function () {});
+
+  checkStatus();
   render();
 })();

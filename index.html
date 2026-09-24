@@ -4,10 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1c2d4b">
+  <meta name="robots" content="index, follow">
   <meta name="description" content="Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.">
+  <meta property="og:type" content="website">
   <meta property="og:title" content="Mingalar · AI English Tutor">
   <meta property="og:description" content="Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.">
+  <meta property="og:image" content="assets/tutor.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mingalar · AI English Tutor">
+  <meta name="twitter:description" content="Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.">
+  <meta name="twitter:image" content="assets/tutor.png">
   <title>Mingalar · AI English Tutor</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 52'%3E%3Cpath fill='%23ffe477' d='M22 4a12 21 0 0 0-12 21c0 14 12 25 12 25s12-11 12-25A12 21 0 0 0 22 4z' transform='rotate(-42 22 25)'/%3E%3Cpath fill='%23ff923f' d='M24 2a12 21 0 0 0-12 21c0 14 12 25 12 25s12-11 12-25A12 21 0 0 0 24 2z'/%3E%3Cpath fill='%2325b86a' d='M26 4a12 21 0 0 0-12 21c0 14 12 25 12 25s12-11 12-25A12 21 0 0 0 26 4z' transform='rotate(42 26 25)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="assets/tutor.png" type="image/png" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,6 +36,10 @@
           <button type="button" data-language="mm"><strong>MM</strong><small lang="my">မြန်မာ</small></button>
           <button type="button" data-language="both"><strong>Both</strong><small lang="my">နှစ်ဘာသာ</small></button>
         </div>
+        <button class="ai-config-button" type="button" data-action="open-api-key" aria-label="Google Gemini AI Settings" title="Configure Google Gemini API key">
+          <span class="ai-dot" id="aiStatusDot"></span>
+          <span>Gemini AI</span>
+        </button>
         <button class="profile-button" type="button" data-view="progress" aria-label="View my progress">M</button>
       </div>
     </header>
@@ -47,6 +62,7 @@
     <footer class="statusbar" id="statusbar"></footer>
   </div>
 
+  <!-- Lesson Library Dialog -->
   <div id="lessonDialog" class="dialog-backdrop" hidden>
     <div class="lesson-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
       <div class="dialog-header">
@@ -54,11 +70,50 @@
         <button type="button" class="icon-button close-button" data-action="close-dialog" aria-label="Close lesson library">×</button>
       </div>
       <div class="dialog-tools">
-        <label class="search-box"><span aria-hidden="true">⌕</span><input id="lessonSearch" type="search" placeholder="Search situations or Myanmar words…" autocomplete="off"></label>
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="lessonSearch" type="search" placeholder="Search situations or Myanmar words…" autocomplete="off" aria-label="Search lessons"></label>
         <select id="categoryFilter" aria-label="Filter by topic"></select>
       </div>
       <div id="lessonList" class="lesson-list"></div>
       <div class="dialog-footnote">47 situations from the supplied guide + 3 clearly marked bonus situations.</div>
+    </div>
+  </div>
+
+  <!-- Gemini API Key Settings Dialog -->
+  <div id="apiKeyDialog" class="dialog-backdrop" hidden>
+    <div class="api-key-dialog" role="dialog" aria-modal="true" aria-labelledby="apiKeyTitle">
+      <div class="dialog-header" style="padding:0 0 12px">
+        <div>
+          <span class="eyebrow">GOOGLE GEMINI AI SETTINGS</span>
+          <h2 id="apiKeyTitle">Gemini API Configuration</h2>
+        </div>
+        <button type="button" class="icon-button close-button" data-action="close-api-dialog" aria-label="Close API settings">×</button>
+      </div>
+      <p>Connect Google Gemini API to get immediate coaching on your spoken and written answers. On Cloudflare Pages, your server key can be set in environment variables, or enter your personal key below (saved locally in your browser).</p>
+      
+      <div id="apiKeyBanner" class="api-key-status-banner info">
+        <span>Checking Gemini AI connection status…</span>
+      </div>
+
+      <label class="form-label" for="geminiApiKeyInput">Gemini API Key</label>
+      <div class="api-key-input-wrap">
+        <input id="geminiApiKeyInput" type="password" placeholder="AIzaSy..." autocomplete="off" spellcheck="false" aria-label="Google Gemini API key">
+        <button type="button" id="toggleApiKeyVis" class="api-key-toggle-btn" aria-label="Show or hide API key">👁</button>
+      </div>
+
+      <label class="form-label" for="geminiModelSelect">Gemini Model</label>
+      <select id="geminiModelSelect" aria-label="Select Gemini model">
+        <option value="gemini-2.5-flash">gemini-2.5-flash (Fast & recommended)</option>
+        <option value="gemini-1.5-flash">gemini-1.5-flash (Reliable fallback)</option>
+        <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+      </select>
+
+      <p style="margin:6px 0 14px;font-size:11px;color:#6b829e">Don't have an API key yet? <a class="api-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Get a free key from Google AI Studio ↗</a></p>
+
+      <div class="api-key-actions">
+        <button class="outline-button" type="button" id="testApiKeyBtn">Test Connection</button>
+        <button class="light-button" type="button" id="clearApiKeyBtn">Clear Key</button>
+        <button class="primary-button" type="button" id="saveApiKeyBtn">Save &amp; Connect</button>
+      </div>
     </div>
   </div>
 
