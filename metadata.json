@@ -1,0 +1,7 @@
+{
+  "name": "Mingalar · AI English Tutor",
+  "description": "Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

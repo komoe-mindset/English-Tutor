@@ -1,0 +1,14 @@
+{
+  "name": "mingalar-ai-english-tutor",
+  "version": "1.0.0",
+  "description": "Mingalar AI English Tutor: English speaking practice for Myanmar learners through hear, shadow, answer, think, retry, improve, and use.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
