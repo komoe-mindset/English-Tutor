@@ -33,9 +33,14 @@ function hasValidKey(key) {
   return Boolean(key && key !== 'MY_GEMINI_API_KEY' && !key.startsWith('your-'));
 }
 
+// Default safe configurations so environment variables are strictly optional
+const DEFAULT_HOST = '0.0.0.0';
+const DEFAULT_PORT = 3000;
+const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+
 const root = __dirname;
-const host = process.env.HOST || '0.0.0.0';
-const port = Number(process.env.PORT) || 3000;
+const host = process.env.HOST || DEFAULT_HOST;
+const port = Number(process.env.PORT) || DEFAULT_PORT;
 const context = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(root, 'lessons.js'), 'utf8'), context);
 const lessons = context.window.MINGALAR_LESSONS;
@@ -97,7 +102,7 @@ async function aiFeedback(request, response) {
     useMyanmar ? 'Add one short Myanmar-language explanation after the English feedback.' : 'Respond in English.'
   ].join('\n');
 
-  const models = [process.env.GEMINI_MODEL || body.geminiModel || 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+  const models = [process.env.GEMINI_MODEL || body.geminiModel || DEFAULT_GEMINI_MODEL, 'gemini-1.5-flash', 'gemini-2.0-flash'];
   const uniqueModels = Array.from(new Set(models));
 
   for (const geminiModel of uniqueModels) {
@@ -149,7 +154,7 @@ const server = http.createServer(async (request, response) => {
     return sendJson(response, 200, {
       aiAvailable: active,
       provider: 'gemini',
-      configuredModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash'
+      configuredModel: process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL
     });
   }
 

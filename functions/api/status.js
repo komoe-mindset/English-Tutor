@@ -2,13 +2,12 @@
 // Reports Gemini availability and environment info
 
 export async function onRequestGet(context) {
-  const { env } = context;
+  const { env = {} } = context || {};
+  const envKey = (env && typeof env.GEMINI_API_KEY === 'string') ? env.GEMINI_API_KEY.trim() : '';
   const hasKey = Boolean(
-    env &&
-    env.GEMINI_API_KEY &&
-    env.GEMINI_API_KEY.trim() &&
-    !env.GEMINI_API_KEY.startsWith('your-') &&
-    env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY'
+    envKey &&
+    !envKey.startsWith('your-') &&
+    envKey !== 'MY_GEMINI_API_KEY'
   );
 
   return new Response(JSON.stringify({

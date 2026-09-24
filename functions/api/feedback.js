@@ -2,17 +2,25 @@
 // Standardized strictly on Google Gemini API
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  const { request, env = {} } = context || {};
 
-  // Header or CORS handling
-  const clientKey = request.headers.get('x-gemini-key') || '';
-  const apiKey = (env && env.GEMINI_API_KEY && env.GEMINI_API_KEY.trim() && !env.GEMINI_API_KEY.startsWith('your-'))
-    ? env.GEMINI_API_KEY.trim()
-    : clientKey.trim();
+  // Safely extract client key header if provided
+  let clientKey = '';
+  try {
+    clientKey = (request && typeof request.headers?.get === 'function')
+      ? (request.headers.get('x-gemini-key') || '').trim()
+      : '';
+  } catch (_) {}
 
-  if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
+  // Safely read context.env.GEMINI_API_KEY
+  const envKey = (env && typeof env.GEMINI_API_KEY === 'string') ? env.GEMINI_API_KEY.trim() : '';
+  const apiKey = (envKey && !envKey.startsWith('your-') && envKey !== 'MY_GEMINI_API_KEY')
+    ? envKey
+    : (clientKey && !clientKey.startsWith('your-') && clientKey !== 'MY_GEMINI_API_KEY' ? clientKey : '');
+
+  if (!apiKey) {
     return new Response(JSON.stringify({
-      error: 'Google Gemini API key not configured. Set GEMINI_API_KEY in Cloudflare Pages environment variables, or enter your API key in Settings.'
+      error: 'Google Gemini API key not configured. Set GEMINI_API_KEY in Cloudflare Pages environment variables, or enter your personal Gemini API key in the app Settings.'
     }), {
       status: 503,
       headers: {
@@ -109,6 +117,21 @@ export async function onRequestPost(context) {
 
   return new Response(JSON.stringify({ error: 'AI tutor service is currently busy. Please try again shortly.' }), {
     status: 503,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
+
+export async function onRequestGet() {
+  return new Response(JSON.stringify({
+    service: 'Mingalar AI Feedback API',
+    endpoint: '/api/feedback',
+    method: 'POST required with { situation, target, learnerAnswer, language }',
+    provider: 'Google Gemini'
+  }), {
+    status: 200,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*'
