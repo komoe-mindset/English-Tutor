@@ -69,7 +69,39 @@
         </div>
       </aside>
 
-      <main id="mainView" tabindex="-1"></main>
+      <main id="mainView" tabindex="-1">
+        <section class="tutor-hero-section" aria-label="AI Tutor Persona">
+          <div class="tutor-persona-card">
+            <div class="tutor-avatar-box">
+              <div class="tutor-avatar-container" data-action="speak-greeting" role="button" tabindex="0" aria-label="Daw Mingalar - AI English Tutor. Tap to hear voice greeting." title="Tap to hear Daw Mingalar speak">
+                <img src="assets/tutor.png" alt="Daw Mingalar - AI English Tutor" class="tutor-avatar-img" width="1586" height="992" fetchpriority="high" decoding="async">
+              </div>
+              <div class="tutor-status-badge" role="status" aria-label="Tutor status: Online and ready to coach">
+                <span class="status-dot-pulse" aria-hidden="true"></span>
+                <span class="status-badge-text">Online • Ready to coach</span>
+              </div>
+            </div>
+            <div class="tutor-speech-bubble">
+              <div class="tutor-bubble-top">
+                <div class="tutor-streak-tag">
+                  <span class="streak-icon">🔥</span>
+                  <span class="streak-text">Streak 0 Days • Beginner A1</span>
+                </div>
+                <button type="button" class="tutor-audio-greeting-btn" data-action="speak-greeting" aria-label="Listen to Daw Mingalar's voice greeting" title="Hear Daw Mingalar speak">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                  <span>Hear Coach</span>
+                </button>
+              </div>
+              <h2 class="tutor-greeting-header">Mingalar Par! I'm your AI English Tutor.</h2>
+              <p class="tutor-greeting-sub" lang="my">ဒီနေ့အတွက် Declining an invitation အကြောင်း လေ့ကျင့်ကြရအောင်။</p>
+              <div class="tutor-bubble-footer">
+                <span class="tutor-coach-chip">✦ Speaking Coach</span>
+                <span class="tutor-situation-chip">Situation 1 of 50</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
 
       <aside id="rightPanel" class="right-panel" aria-label="Lesson details"></aside>
     </div>

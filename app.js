@@ -236,45 +236,35 @@
       '</div><div class="keep-going"><span>⭐</span><div><strong>Keep Going!</strong><small lang="my">ဆက်လက်ကြိုးစားပါ။</small></div></div>';
   }
   function hero() {
-    return `<section class="persona-hero" aria-label="AI Tutor Persona">` +
-      `<div class="persona-card">` +
-        `<div class="persona-avatar-wrap">` +
-          `<div class="persona-avatar-frame" data-action="speak-greeting" role="button" tabindex="0" aria-label="Mingalar AI Tutor. Tap to hear voice greeting." title="Tap to hear tutor greeting">` +
-            `<img class="persona-avatar-img" src="assets/tutor.png" alt="Mingalar AI English Tutor friendly guide illustrating spoken English practice" width="1586" height="992" fetchpriority="high" decoding="async">` +
-            `<div class="persona-online-badge" role="status" aria-label="Tutor status: Online and ready to speak">` +
-              `<span class="online-dot" aria-hidden="true"></span>` +
-              `<span class="online-label">Online · Ready to speak</span>` +
-            `</div>` +
+    const current = lesson();
+    const streakDays = streak();
+    const level = state.completed.length < 15 ? 'Beginner A1' : state.completed.length < 35 ? 'Elementary A2' : 'Intermediate B1';
+    return `<section class="tutor-hero-section" aria-label="AI Tutor Persona">` +
+      `<div class="tutor-persona-card">` +
+        `<div class="tutor-avatar-box">` +
+          `<div class="tutor-avatar-container" data-action="speak-greeting" role="button" tabindex="0" aria-label="Daw Mingalar - AI English Tutor. Tap to hear voice greeting." title="Tap to hear Daw Mingalar speak">` +
+            `<img src="assets/tutor.png" alt="Daw Mingalar - AI English Tutor" class="tutor-avatar-img" width="1586" height="992" fetchpriority="high" decoding="async">` +
           `</div>` +
-          `<div class="persona-meta">` +
-            `<strong class="persona-name">Saya Mingalar</strong>` +
-            `<span class="persona-subtitle">AI Speaking Partner</span>` +
-            `<button type="button" class="persona-voice-btn" data-action="speak-greeting" aria-label="Listen to tutor greeting">` +
-              `${icon('volume', 14)} <span>Hear Voice</span>` +
-            `</button>` +
+          `<div class="tutor-status-badge" role="status" aria-label="Tutor status: Online and ready to coach">` +
+            `<span class="status-dot-pulse" aria-hidden="true"></span>` +
+            `<span class="status-badge-text">Online • Ready to coach</span>` +
           `</div>` +
         `</div>` +
-        `<div class="persona-conversation">` +
-          `<div class="conversation-bubble">` +
-            `<div class="dialogue-grid">` +
-              `<div class="dialogue-col dialogue-en">` +
-                `<div class="dialogue-tag"><span class="chip-spark">✦</span> English Coach</div>` +
-                `<p class="dialogue-text">“Mingalar Par! I’m your English tutor. Let’s speak English together with confidence!”</p>` +
-                `<div class="dialogue-footer">` +
-                  `<span class="dialogue-pill">50 Situations</span>` +
-                  `<span class="dialogue-pill">150 Expressions</span>` +
-                `</div>` +
-              `</div>` +
-              `<div class="dialogue-divider" aria-hidden="true"></div>` +
-              `<div class="dialogue-col dialogue-mm" lang="my">` +
-                `<div class="dialogue-tag mm-tag"><span class="chip-spark">✦</span> မြန်မာလို အားပေးစကား</div>` +
-                `<p class="dialogue-text">“မင်္ဂလာပါ။ အမှားကို မကြောက်ဘဲ နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို အတူတူ သဘာဝကျကျ လေ့ကျင့်ကြမယ်။”</p>` +
-                `<div class="dialogue-footer">` +
-                  `<span class="dialogue-pill mm-pill">နားထောင် &middot; တုပ &middot; ဖြေဆို</span>` +
-                  `<span class="dialogue-pill mm-pill">အဆင့် ၇ ဆင့်</span>` +
-                `</div>` +
-              `</div>` +
+        `<div class="tutor-speech-bubble">` +
+          `<div class="tutor-bubble-top">` +
+            `<div class="tutor-streak-tag">` +
+              `<span class="streak-icon">🔥</span>` +
+              `<span class="streak-text">Streak ${streakDays} Days • ${level}</span>` +
             `</div>` +
+            `<button type="button" class="tutor-audio-greeting-btn" data-action="speak-greeting" aria-label="Listen to Daw Mingalar's voice greeting" title="Hear Daw Mingalar speak">` +
+              `${icon('volume', 15)} <span>Hear Coach</span>` +
+            `</button>` +
+          `</div>` +
+          `<h2 class="tutor-greeting-header">Mingalar Par! I'm your AI English Tutor.</h2>` +
+          `<p class="tutor-greeting-sub" lang="my">ဒီနေ့အတွက် ${esc(current.title)} အကြောင်း လေ့ကျင့်ကြရအောင်။</p>` +
+          `<div class="tutor-bubble-footer">` +
+            `<span class="tutor-coach-chip">✦ Speaking Coach</span>` +
+            `<span class="tutor-situation-chip">Situation ${current.id} of 50</span>` +
           `</div>` +
         `</div>` +
       `</div>` +
@@ -360,7 +350,7 @@
     if (state.step === 1) return (
       '<p class="step-description">Listen carefully to the sentence. Notice its rhythm and tone.<span lang="my">စာကြောင်းကို ဂရုတစိုက် နားထောင်ပြီး အသံနေအသံထားကို သတိပြုပါ။</span></p>' +
       sentenceBox(!state.textRevealed) +
-      `<div class="center-actions"><button class="primary-button wide" type="button" data-action="play">${icon('play', 16)} Play sentence</button><button class="outline-button" type="button" data-action="reveal">${icon('eye', 16)} ${state.textRevealed ? 'Hide text' : 'Show text'}</button></div>`
+      `<div class="center-actions"><button class="primary-button wide play-sentence-btn" type="button" data-action="play">${icon('play', 18)} Play sentence</button><button class="outline-button" type="button" data-action="reveal">${icon('eye', 16)} ${state.textRevealed ? 'Hide text' : 'Show text'}</button></div>`
     );
     if (state.step === 2) {
       let feedback = '';
