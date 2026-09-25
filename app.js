@@ -236,11 +236,69 @@
       '</div><div class="keep-going"><span>⭐</span><div><strong>Keep Going!</strong><small lang="my">ဆက်လက်ကြိုးစားပါ။</small></div></div>';
   }
   function hero() {
-    return '<div class="hero"><img class="hero-img" src="assets/tutor.png" alt="Mingalar AI English Tutor friendly guide illustrating spoken English practice" width="1586" height="992" fetchpriority="high" decoding="async"><div class="hero-bubble"><strong>Mingalar Par!</strong><p>I’m your English tutor.<br>Let’s speak English together!</p><small lang="my">မင်္ဂလာပါ။ အင်္ဂလိပ်စကား အတူတူ လေ့ကျင့်ကြမယ်။</small></div><div class="hero-badge">✦ 50 situations · 150 sentences</div></div>';
+    return `<section class="persona-hero" aria-label="AI Tutor Persona">` +
+      `<div class="persona-card">` +
+        `<div class="persona-avatar-wrap">` +
+          `<div class="persona-avatar-frame" data-action="speak-greeting" role="button" tabindex="0" aria-label="Mingalar AI Tutor. Tap to hear voice greeting." title="Tap to hear tutor greeting">` +
+            `<img class="persona-avatar-img" src="assets/tutor.png" alt="Mingalar AI English Tutor friendly guide illustrating spoken English practice" width="1586" height="992" fetchpriority="high" decoding="async">` +
+            `<div class="persona-online-badge" role="status" aria-label="Tutor status: Online and ready to speak">` +
+              `<span class="online-dot" aria-hidden="true"></span>` +
+              `<span class="online-label">Online · Ready to speak</span>` +
+            `</div>` +
+          `</div>` +
+          `<div class="persona-meta">` +
+            `<strong class="persona-name">Saya Mingalar</strong>` +
+            `<span class="persona-subtitle">AI Speaking Partner</span>` +
+            `<button type="button" class="persona-voice-btn" data-action="speak-greeting" aria-label="Listen to tutor greeting">` +
+              `${icon('volume', 14)} <span>Hear Voice</span>` +
+            `</button>` +
+          `</div>` +
+        `</div>` +
+        `<div class="persona-conversation">` +
+          `<div class="conversation-bubble">` +
+            `<div class="dialogue-grid">` +
+              `<div class="dialogue-col dialogue-en">` +
+                `<div class="dialogue-tag"><span class="chip-spark">✦</span> English Coach</div>` +
+                `<p class="dialogue-text">“Mingalar Par! I’m your English tutor. Let’s speak English together with confidence!”</p>` +
+                `<div class="dialogue-footer">` +
+                  `<span class="dialogue-pill">50 Situations</span>` +
+                  `<span class="dialogue-pill">150 Expressions</span>` +
+                `</div>` +
+              `</div>` +
+              `<div class="dialogue-divider" aria-hidden="true"></div>` +
+              `<div class="dialogue-col dialogue-mm" lang="my">` +
+                `<div class="dialogue-tag mm-tag"><span class="chip-spark">✦</span> မြန်မာလို အားပေးစကား</div>` +
+                `<p class="dialogue-text">“မင်္ဂလာပါ။ အမှားကို မကြောက်ဘဲ နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို အတူတူ သဘာဝကျကျ လေ့ကျင့်ကြမယ်။”</p>` +
+                `<div class="dialogue-footer">` +
+                  `<span class="dialogue-pill mm-pill">နားထောင် &middot; တုပ &middot; ဖြေဆို</span>` +
+                  `<span class="dialogue-pill mm-pill">အဆင့် ၇ ဆင့်</span>` +
+                `</div>` +
+              `</div>` +
+            `</div>` +
+          `</div>` +
+        `</div>` +
+      `</div>` +
+    `</section>`;
   }
   function sentenceBox(concealed) {
     const item = variant();
-    return `<div class="sentence-box ${concealed ? 'concealed' : ''}"><button class="play-round" type="button" data-action="play" aria-label="Play sentence">${icon('volume', 25)}</button><div class="sentence-text">${esc(item.en)}${state.language !== 'en' && !concealed ? '<small lang="my">' + esc(item.mm) + '</small>' : ''}</div></div>`;
+    return `<div class="sentence-box ${concealed ? 'concealed' : ''}">` +
+      `<div class="sentence-player-row">` +
+        `<button class="play-round" type="button" data-action="play" aria-label="Play sentence in English">${icon('volume', 28)}</button>` +
+        `<div class="sentence-text-wrap">` +
+          `<div class="sentence-text">${esc(item.en)}</div>` +
+          `${state.language !== 'en' && !concealed ? '<div class="sentence-translation" lang="my">' + esc(item.mm) + '</div>' : ''}` +
+        `</div>` +
+      `</div>` +
+      `<div class="sentence-controls-bar">` +
+        `<span class="speed-hint">Voice Speed:</span>` +
+        `<div class="speed-buttons" role="group" aria-label="Audio playback speed">` +
+          `<button type="button" class="speed-chip ${state.speechRate === 0.7 ? 'active' : ''}" data-action="set-speed" data-rate="0.7">0.7x Slow</button>` +
+          `<button type="button" class="speed-chip ${state.speechRate === 0.9 ? 'active' : ''}" data-action="set-speed" data-rate="0.9">0.9x Normal</button>` +
+          `<button type="button" class="speed-chip ${state.speechRate === 1.1 ? 'active' : ''}" data-action="set-speed" data-rate="1.1">1.1x Fast</button>` +
+        `</div>` +
+      `</div>` +
+    `</div>`;
   }
   function stageHead() {
     const item = STEPS[state.step - 1];
@@ -250,7 +308,13 @@
     return `<textarea class="practice-textarea" name="${name}" rows="${rows || 3}" placeholder="${esc(placeholder)}">${esc(state.inputs[name])}</textarea>`;
   }
   function micButton(field) {
-    return `<button type="button" class="mic-button ${state.recording ? 'recording' : ''}" data-action="record" data-field="${field}"><span class="mic-circle">${icon('mic', 21)}</span><span>${state.recording ? 'Listening… tap to stop' : 'Tap to speak'}<small lang="my">မိုက်ဖြင့် ပြောပါ</small></span></button>`;
+    return `<button type="button" class="mic-button ${state.recording ? 'recording' : ''}" data-action="record" data-field="${field}" aria-label="${state.recording ? 'Stop voice recording' : 'Tap to speak English'}">` +
+      `<span class="mic-circle">${icon('mic', 21)}</span>` +
+      `<span class="mic-label">` +
+        `<strong>${state.recording ? 'Listening… tap to stop' : 'Tap to speak English'}</strong>` +
+        `<small lang="my">${state.recording ? 'နားထောင်နေသည် · ရပ်ရန် နှိပ်ပါ' : 'မိုက်ဖြင့် အသံသွင်းပြောဆိုပါ'}</small>` +
+      `</span>` +
+    `</button>`;
   }
   function wordMarks(value) {
     const comparison = wordFeedback(value).result;
@@ -365,10 +429,53 @@
   }
   function renderHome() {
     const next = LESSONS.find(function (item) { return !state.completed.includes(item.id); }) || LESSONS[0];
-    return `<div class="page-padding"><div class="page-heading"><div><span class="eyebrow">WELCOME TO MINGALAR</span><h1>Speak with confidence</h1><p lang="my">နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို ယုံကြည်မှုရှိရှိ ပြောကြည့်ပါ။</p></div></div><div class="dashboard-hero"><img class="dashboard-hero-bg" src="assets/tutor.png" alt="Mingalar AI English Tutor practice banner with learner guide illustration" width="1586" height="992" fetchpriority="high" decoding="async"><div class="dashboard-hero-inner"><span class="eyebrow">YOUR DAILY PRACTICE</span><h2>One sentence.<br>Seven ways to grow.</h2><p>Hear → Shadow → Answer → Think → Retry → Improve → Use</p><button class="primary-button" type="button" data-action="resume">Start practicing ${icon('arrow', 16)}</button></div></div>` +
-      `<div class="summary-grid"><div class="summary-card"><span>🎯</span><strong>${state.completed.length}/50</strong><small>situations completed</small></div><div class="summary-card"><span>🔥</span><strong>${streak()}</strong><small>day streak</small></div><div class="summary-card"><span>⭐</span><strong>${state.completed.length * 20}</strong><small>experience points</small></div></div>` +
-      '<div class="view-card"><span class="eyebrow">NEW INTERACTIVE COURSE</span><h2>10 Essential Steps to Master Spoken English</h2><p class="step-description">Turn Saya Nay’s ebook ideas into short speaking tasks, listening checks, phrase practice, and a 30-day plan.</p><a class="primary-button" href="mastery.html">Explore the 10 steps →</a></div>' +
-      `<div class="section-heading"><h2>Continue learning</h2><button class="mini-action" type="button" data-action="choose-lesson">View all 50 →</button></div><div class="lesson-tiles">${[next, LESSONS[(next.id) % 50], LESSONS[(next.id + 1) % 50], LESSONS[(next.id + 2) % 50]].map(function (item) { return '<button class="lesson-tile" type="button" data-lesson="' + item.id + '"><span class="tile-number">' + String(item.id).padStart(2, '0') + '</span><span><strong>' + esc(item.title) + '</strong><small lang="my">' + esc(item.titleMm) + '</small></span></button>'; }).join('')}</div></div>`;
+    return `<div class="page-padding">` +
+      `<div class="page-heading">` +
+        `<div>` +
+          `<span class="eyebrow">WELCOME TO MINGALAR · မင်္ဂလာပါ</span>` +
+          `<h1>Speak with confidence</h1>` +
+          `<p lang="my">နေ့စဉ်သုံး အင်္ဂလိပ်စကားကို ယုံကြည်မှုရှိရှိ ပြောကြည့်ပါ။</p>` +
+        `</div>` +
+      `</div>` +
+      `<div class="dashboard-hero">` +
+        `<div class="dashboard-hero-content">` +
+          `<div class="dashboard-eyebrow"><span class="chip-spark">✦</span> YOUR DAILY PRACTICE · နေ့စဉ်လေ့ကျင့်မှု</div>` +
+          `<h2>One sentence.<br>Seven ways to speak.</h2>` +
+          `<p class="dashboard-hero-sub">Hear &rarr; Shadow &rarr; Answer &rarr; Think &rarr; Retry &rarr; Improve &rarr; Use</p>` +
+          `<div class="dashboard-hero-actions">` +
+            `<button class="primary-button hero-main-btn" type="button" data-action="resume">Start today’s practice ${icon('arrow', 16)}</button>` +
+            `<button class="outline-button hero-outline-btn" type="button" data-action="choose-lesson">${icon('book', 15)} Browse all 50</button>` +
+          `</div>` +
+        `</div>` +
+        `<div class="dashboard-hero-persona">` +
+          `<div class="persona-avatar-frame home-avatar-frame" data-action="speak-greeting" role="button" tabindex="0" aria-label="Mingalar AI Tutor. Tap to hear greeting." title="Tap to hear tutor greeting">` +
+            `<img class="persona-avatar-img" src="assets/tutor.png" alt="Mingalar AI English Tutor friendly guide illustrating spoken English practice" width="1586" height="992" fetchpriority="high" decoding="async">` +
+            `<div class="persona-online-badge">` +
+              `<span class="online-dot" aria-hidden="true"></span>` +
+              `<span class="online-label">Online · Ready to speak</span>` +
+            `</div>` +
+          `</div>` +
+          `<div class="home-persona-label">` +
+            `<strong>Saya Mingalar</strong>` +
+            `<small lang="my">နေ့စဉ် အတူတူ လေ့ကျင့်ကြမယ်</small>` +
+            `<button type="button" class="persona-voice-btn" data-action="speak-greeting" aria-label="Listen to voice greeting">${icon('volume', 13)} <span>Hear Voice</span></button>` +
+          `</div>` +
+        `</div>` +
+      `</div>` +
+      `<div class="summary-grid">` +
+        `<div class="summary-card"><span>🎯</span><strong>${state.completed.length}/50</strong><small>situations completed</small></div>` +
+        `<div class="summary-card"><span>🔥</span><strong>${streak()}</strong><small>day streak</small></div>` +
+        `<div class="summary-card"><span>⭐</span><strong>${state.completed.length * 20}</strong><small>experience points</small></div>` +
+      `</div>` +
+      `<div class="view-card course-banner-card">` +
+        `<span class="eyebrow">NEW INTERACTIVE COURSE · အထူးသင်ခန်းစာ</span>` +
+        `<h2>10 Essential Steps to Master Spoken English</h2>` +
+        `<p class="step-description">Turn Saya Nay’s ebook ideas into short speaking tasks, listening checks, phrase practice, and a 30-day plan.</p>` +
+        `<a class="primary-button" href="mastery.html">Explore the 10 steps &rarr;</a>` +
+      `</div>` +
+      `<div class="section-heading"><h2>Continue learning</h2><button class="mini-action" type="button" data-action="choose-lesson">View all 50 &rarr;</button></div>` +
+      `<div class="lesson-tiles">${[next, LESSONS[(next.id) % 50], LESSONS[(next.id + 1) % 50], LESSONS[(next.id + 2) % 50]].map(function (item) { return '<button class="lesson-tile" type="button" data-lesson="' + item.id + '"><span class="tile-number">' + String(item.id).padStart(2, '0') + '</span><span><strong>' + esc(item.title) + '</strong><small lang="my">' + esc(item.titleMm) + '</small></span></button>'; }).join('')}</div>` +
+    `</div>`;
   }
   function pageHead(eyebrow, title, mm) {
     return `<div class="page-heading"><div><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p lang="my">${mm}</p></div><button class="small-outline" type="button" data-action="choose-lesson">${icon('book', 15)} Choose lesson</button></div>`;
@@ -690,6 +797,17 @@ Keep tone encouraging, concise, and easy to read. ${language === 'mm' ? 'Provide
     else if (action === 'open-api-key') openApiKeyDialog();
     else if (action === 'close-api-dialog') closeApiKeyDialog();
     else if (action === 'resume') goView('speaking');
+    else if (action === 'speak-greeting') {
+      speak("Mingalar Par! I’m your English tutor. Let’s speak English together with confidence!");
+      toast("Saya Mingalar: Mingalar Par! Let's speak English together!");
+    }
+    else if (action === 'set-speed') {
+      const rate = parseFloat(button.dataset.rate || '0.9');
+      state.speechRate = rate;
+      persist();
+      render();
+      toast('Voice speed: ' + (rate === 0.7 ? '0.7x Slow' : rate === 1.1 ? '1.1x Fast' : '0.9x Normal'));
+    }
     else if (action === 'play') speak(variant().en);
     else if (action === 'play-text') speak(button.dataset.text);
     else if (action === 'play-variant') speak(lesson().variants[Number(button.dataset.index)].en);
